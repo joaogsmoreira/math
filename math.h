@@ -6,29 +6,19 @@
 template <class T>
 class Matrix {
 public:
-    Matrix(unsigned int rows, unsigned int cols) {
-        setRows(rows);
-        setCols(cols);
-        _data = new T*[rows];
-
+    Matrix(unsigned int rows, unsigned int cols)
+        : _rows(rows), _cols(cols), _data(new T*[rows]) {  
         for (unsigned int r = 0; r < _rows; r++) {
-            _data[r] = new T[cols];
+            _data[r] = new T[_cols];
         }
         for(unsigned int r = 0; r < _rows; r++) {
-            for(unsigned int c = 0; c < cols; c++) {
+            for(unsigned int c = 0; c < _cols; c++) {
                 _data[r][c] = (T) r * c;
             }
         }
     }
 
     void print(void);
-    
-    void setRows(unsigned int r) {
-        _rows = r;
-    }
-    void setCols(unsigned int c) {
-        _cols = c;
-    }
 
 private:
     unsigned int _rows, _cols;
