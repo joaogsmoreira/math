@@ -1,5 +1,5 @@
 cc_library(
     name = "math",
-    hdrs = ["matrix.h"],
+    hdrs = ["math.h"],
     visibility = ["//app:__pkg__"],
 )
