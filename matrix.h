@@ -3,7 +3,11 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <fstream>
 #include <memory>
+#include <math.h>
+
+#define EPSILON 1e-5
 
 template <class T>
 class Matrix {
@@ -23,27 +27,35 @@ public:
 
     void print(void);
 
+    /* Only needed if further restrictions are aplied
+    T* access_slot(const unsigned int row, const unsigned int col) {
+        return _data[row][col];
+    } */
+
     unsigned int _rows, _cols;
     T **_data;
 };
 
 template <class T>
 void Matrix<T>::print(void) {
+    std::ofstream myfile;
+    myfile.open("result.mine", std::ios_base::app);
     for (unsigned int r = 0; r < _rows; r++) {
-        for(unsigned int c = 0; c < _cols; c++) {
-            printf("%d    ",(int) _data[r][c]);
+        for (unsigned int c = 0; c < _cols; c++) {
+            myfile.precision(6);
+            myfile << std::fixed << "    " << (float) _data[r][c];
         }
-        printf("\n");
+        myfile << std::endl;
     }
-    printf("\n");
+    myfile << std::endl;
+    myfile.close();
 }
 
 template <class T>
-Matrix<T> matrix_multiplier(const Matrix<T> &a, const Matrix<T> &b) {
+Matrix<T> matrixMultiplier(const Matrix<T> &a, const Matrix<T> &b) {
 
     if (a._cols != b._rows) {
-        std::cout << "Math Error: Invalid size in matrix multiplication" << std::endl;
-        exit(0);
+        throw std::runtime_error("Math Error: Invalid size in matrix multiplication");
     }
 
     // The product of an m*n matrix and an n*k matrix is an m*k matrix
@@ -59,6 +71,26 @@ Matrix<T> matrix_multiplier(const Matrix<T> &a, const Matrix<T> &b) {
     }
 
     return result;
+}
+
+// Returns true if numbers are equal
+bool compareFloatNumbers(float a, float b) {
+    return fabs(a - b) < EPSILON;
+}
+
+// Returns true if matrixes are equal
+bool compareFloatMatrixes(Matrix<float> a, Matrix<float> b) {
+    if (a._rows != b._rows || a._cols != b._cols) {
+        return false;
+    }
+    for (uint r = 0; r < a._rows; r++) {
+        for (uint c = 0; c < a._cols; c++) {
+            if (!compareFloatNumbers(a._data[r][c], b._data[r][c])) {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 #endif
