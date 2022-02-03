@@ -20,20 +20,20 @@ class Matrix {
 public:
   Matrix(unsigned int rows, unsigned int cols, bool zero = false)
     : _rows(rows), _cols(cols) {
-    data.reserve(_rows);
+    data.resize(_rows);
     for (unsigned int r = 0; r < _rows; r++) {
-      data[r].reserve(_cols);
+      data[r].resize(_cols);
     }
     //Assign default values
     for(unsigned int r = 0; r < _rows; r++) {
       for(unsigned int c = 0; c < _cols; c++) {
-        data[r][c] = 0;
+        data[r][c] = zero ? 0 : r * c;
       }
     }
   }
 
   //Its either single row or single column
-  Matrix(const std::vector<unsigned char> &m, MatrixType type = SINGLE_ROW) {
+  Matrix(const std::vector<T> &m, MatrixType type = SINGLE_ROW) {
     switch (type) {
       case SINGLE_ROW:
         _rows = 1;
@@ -43,7 +43,7 @@ public:
       case SINGLE_COLUMN:
         _rows = m.size();
         _cols = 1;
-        data.reserve(_rows);
+        data.resize(_rows);
         for (unsigned int i = 0; i < _rows; i++) {
           data[i].push_back(m[i]);
         }
@@ -54,13 +54,16 @@ public:
   void Print(void);
 
   unsigned int _rows, _cols;
-  std::vector<std::vector<unsigned char>> data;
+  std::vector<std::vector<T>> data;
 };
 
 template <class T>
 void Matrix<T>::Print(void) {
   std::ofstream myfile;
   myfile.open("result.mine", std::ios_base::app);
+  if (!myfile.good()) {
+    throw std::runtime_error("File Error: Couldn't create log file");
+  }
   for (unsigned int r = 0; r < _rows; r++) {
     for (unsigned int c = 0; c < _cols; c++) {
       myfile.precision(6);
